@@ -95,7 +95,7 @@ MainWindow::MainWindow(QWidget *parent)
             update_go_state();
         });
     connect(ui->combobox_remap, QOverload<int>::of(&QComboBox::activated), this,
-        [this](int index)
+        [](int index)
         {
             settings.wad_remap = static_cast<PatcherSettings::
                                              wad_remap_t>(index);
@@ -154,7 +154,7 @@ MainWindow::MainWindow(QWidget *parent)
         });
     connect(ui->combobox_region, QOverload<int>::of(&QComboBox::activated),
             this,
-        [this](int index)
+        [](int index)
         {
             settings.wad_region = static_cast<PatcherSettings::
                                               wad_region_t>(index);
