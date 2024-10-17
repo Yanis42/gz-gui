@@ -551,9 +551,9 @@ int Patcher::patch()
 
             cmd = gru + " lua/patch-wad.lua -s -k " + quote(key_path) + " -d "
                   + quote(extract_path);
-            if (settings.wad_remap == PatcherSettings::wad_remap_t::RAPHNET)
+            if (settings.wad_remap == PatcherSettings::controller_remap_t::RAPHNET)
                 cmd += " --raphnet";
-            else if (settings.wad_remap == PatcherSettings::wad_remap_t::NONE)
+            else if (settings.wad_remap == PatcherSettings::controller_remap_t::NONE)
                 cmd += " --disable-controller-remappings";
             if (!settings.channel_id.empty())
                 cmd += " -i " + quote(settings.channel_id);
@@ -592,6 +592,56 @@ int Patcher::patch()
             if (wad_file.error() != QFile::NoError)
               throw std::runtime_error(wad_file.errorString().toStdString());
 
+            break;
+        }
+        case PatcherSettings::patch_mode_t::ISO: {
+            std::string extract_path = tmpdir.filePath("isoextract")
+                    .toStdString();
+            std::string iso_path = tmpdir.filePath("gz.iso").toStdString();
+            std::string cmd;
+
+            cmd = gru + " lua/patch-iso.lua -s -d " + quote(extract_path);
+            if (settings.iso_remap == PatcherSettings::controller_remap_t::RAPHNET)
+                cmd += " --raphnet";
+            else if (settings.iso_remap == PatcherSettings::controller_remap_t::NONE)
+                cmd += " --disable-controller-remappings";
+            if (!settings.game_id.empty())
+                cmd += " -i " + quote(settings.game_id);
+            if (!settings.game_name.empty())
+                cmd += " -t " + quote(settings.game_name);
+            if (settings.iso_opt_extrom)
+                cmd += " -m " + quote(settings.iso_extrom_path);
+            if (settings.iso_is_mq && settings.iso_opt_extrom_mq)
+                cmd += " --mq-rom " + quote(settings.iso_extrom_mq_path);
+            cmd += " -o " + quote(iso_path) + " " + quote(settings.iso_path);
+
+            emit output(QString::fromStdString("executing: " + cmd + "\n"));
+            output_str.clear();
+            status = invoke_subprogram(cmd, "", output_to_str, output_to_log);
+            if (status != 0)
+                break;
+
+            std::string gz_iso_name = std::move(output_str);
+            while (!gz_iso_name.empty() && isspace(gz_iso_name.back()))
+                gz_iso_name.pop_back();
+            
+            QString save_name;
+            emit needSaveFileName(&save_name, "Save as...", gz_iso_name.c_str(),
+                                  "Nintendo GameCube ISO (*.iso)");
+            if (save_name.isEmpty()) {
+                status = 0;
+                break;
+
+            emit output("saving: " + save_name + "\n");
+            QFile iso_file(iso_path.c_str());
+            iso_file.rename(save_name);
+            if (iso_file.error() == QFile::RenameError) {
+              QFile::remove(save_name);
+              iso_file.rename(save_name);
+            }
+            if (iso_file.error() != QFile::NoError)
+              throw std::runtime_error(iso_file.errorString().toStdString());
+            }
             break;
         }
     }

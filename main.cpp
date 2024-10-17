@@ -23,6 +23,7 @@ bool check_files()
 #endif
         {"lua/patch-rom.lua", S_IFREG},
         {"lua/patch-wad.lua", S_IFREG},
+        {"lua/patch-iso.lua", S_IFREG},
         {"lua/rom_table.lua", S_IFREG},
         {"lua/inject_ucode.lua", S_IFREG},
         {"ups", S_IFDIR},

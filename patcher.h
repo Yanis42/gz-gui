@@ -12,16 +12,17 @@ public:
     {
         ROM,
         WAD,
+        ISO,
     };
 
-    enum wad_remap_t
+    enum controller_remap_t
     {
         DEFAULT,
         RAPHNET,
         NONE,
     };
 
-    enum wad_region_t
+    enum console_region_t
     {
         JAP,
         USA,
@@ -31,17 +32,31 @@ public:
 
     patch_mode_t patch_mode = patch_mode_t::ROM;
 
+    // Patch a ROM
     std::string rom_path;
     std::string ucode_path;
     bool opt_ucode = false;
 
+    // Patch a WAD
     std::string wad_path;
     std::string extrom_path;
     bool opt_extrom = false;
-    enum wad_remap_t wad_remap = wad_remap_t::DEFAULT;
+    enum controller_remap_t wad_remap = controller_remap_t::DEFAULT;
     std::string channel_id;
     std::string channel_title;
-    enum wad_region_t wad_region = wad_region_t::FREE;
+    enum console_region_t wad_region = console_region_t::FREE;
+
+    // Patch an ISO
+    std::string iso_path;
+    std::string iso_extrom_path;
+    bool iso_is_mq = false; // "true" if the base ISO ID is "D43J01" or "D43E01"
+    bool iso_no_trim = false; // "false" to remove the useless files to save space
+    bool iso_opt_extrom = false;
+    std::string iso_extrom_mq_path;
+    bool iso_opt_extrom_mq = false;
+    enum controller_remap_t iso_remap = controller_remap_t::DEFAULT;
+    std::string game_id;
+    std::string game_name;
 };
 
 class Patcher : public QThread
