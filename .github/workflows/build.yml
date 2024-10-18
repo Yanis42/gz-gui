@@ -36,9 +36,10 @@ jobs:
 
     # Setup Qt
     - name: Install Qt
-      uses: jurplel/install-qt-action@v3
+      uses: jurplel/install-qt-action@v4
       with:
         version: '6.2.4'
+        setup-python: false
     - uses: ilammy/msvc-dev-cmd@v1
     # - name: Setup
     #   run: |
