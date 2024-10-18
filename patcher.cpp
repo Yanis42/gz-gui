@@ -613,6 +613,8 @@ int Patcher::patch()
                 cmd += " -m " + quote(settings.iso_extrom_path);
             if (settings.iso_is_mq && settings.iso_opt_extrom_mq)
                 cmd += " --mq-rom " + quote(settings.iso_extrom_mq_path);
+            if (!settings.iso_do_trim)
+                cmd += " --no-trim";
             cmd += " -o " + quote(iso_path) + " " + quote(settings.iso_path);
 
             emit output(QString::fromStdString("executing: " + cmd + "\n"));
@@ -624,24 +626,25 @@ int Patcher::patch()
             std::string gz_iso_name = std::move(output_str);
             while (!gz_iso_name.empty() && isspace(gz_iso_name.back()))
                 gz_iso_name.pop_back();
-            
+
             QString save_name;
             emit needSaveFileName(&save_name, "Save as...", gz_iso_name.c_str(),
                                   "Nintendo GameCube ISO (*.iso)");
             if (save_name.isEmpty()) {
                 status = 0;
                 break;
+            }
 
             emit output("saving: " + save_name + "\n");
             QFile iso_file(iso_path.c_str());
             iso_file.rename(save_name);
             if (iso_file.error() == QFile::RenameError) {
-              QFile::remove(save_name);
-              iso_file.rename(save_name);
+                QFile::remove(save_name);
+                iso_file.rename(save_name);
             }
             if (iso_file.error() != QFile::NoError)
-              throw std::runtime_error(iso_file.errorString().toStdString());
-            }
+                throw std::runtime_error(iso_file.errorString().toStdString());
+
             break;
         }
     }

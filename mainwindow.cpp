@@ -376,7 +376,7 @@ void MainWindow::init_iso_tab()
     connect(ui->checkbox_iso_no_trim, &QCheckBox::stateChanged,
         [this](int state)
         {
-            settings.iso_no_trim = state;
+            settings.iso_do_trim = state;
             update_go_state();
         });
 }

@@ -50,7 +50,7 @@ public:
     std::string iso_path;
     std::string iso_extrom_path;
     bool iso_is_mq = false; // "true" if the base ISO ID is "D43J01" or "D43E01"
-    bool iso_no_trim = false; // "false" to remove the useless files to save space
+    bool iso_do_trim = true; // "true" to remove the useless files to save space
     bool iso_opt_extrom = false;
     std::string iso_extrom_mq_path;
     bool iso_opt_extrom_mq = false;
