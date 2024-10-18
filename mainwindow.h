@@ -16,7 +16,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QString last_extrom_mq_iso_text;
+    QString default_extrom_mq_iso_text;
 
     void connect_rom();
     void connect_wad();

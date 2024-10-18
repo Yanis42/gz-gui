@@ -244,7 +244,8 @@ void MainWindow::connect_wad()
 
 void MainWindow::update_iso_mq_state(QString *path)
 {
-    QString last_text;
+    //! TODO: improve how the label text update is handled
+    QString new_text = "This game doesn't have Master Quest.";
 
     settings.iso_is_mq = false;
 
@@ -259,31 +260,33 @@ void MainWindow::update_iso_mq_state(QString *path)
 
             // supported MQ disc IDs (JP and US)
             if (game_id == "D43J01" || game_id == "D43E01") {
+                new_text = QString::fromStdString(settings.iso_extrom_mq_path);
+
                 settings.iso_is_mq = true;
+
+                if (new_text != "") {
+                    new_text.remove(0, new_text.lastIndexOf('\\') + 1);
+                    new_text.remove(0, new_text.lastIndexOf('/') + 1);
+                } else {
+                    new_text = default_extrom_mq_iso_text;
+                }
             }
         } else {
-            QMessageBox::warning(nullptr, "", "ERROR: The path to the ISO cannot be found.");
+            QMessageBox::warning(nullptr, "", "ERROR: The ISO can't be opened.");
         }
     }
 
     // update the ui accordingly
     ui->checkbox_extrom_mq_iso->setEnabled(settings.iso_is_mq);
     ui->checkbox_extrom_mq_iso->setVisible(settings.iso_is_mq);
-    ui->button_extrom_mq_iso->setDisabled(ui->checkbox_extrom_mq_iso->isEnabled());
-    ui->button_extrom_mq_iso->setVisible(ui->checkbox_extrom_mq_iso->isVisible());
-    last_text = ui->label_extrom_mq_iso->text();
-
-    if (settings.iso_is_mq) {
-        ui->label_extrom_mq_iso->setText(last_extrom_mq_iso_text);
-    } else {
-        ui->label_extrom_mq_iso->setText("This game doesn't have Master Quest.");
-    }
-
-    last_extrom_mq_iso_text = last_text;
+    ui->button_extrom_mq_iso->setDisabled(ui->checkbox_extrom_mq_iso->isChecked());
+    ui->button_extrom_mq_iso->setVisible(settings.iso_is_mq);
+    ui->label_extrom_mq_iso->setText(new_text);
 }
 
 void MainWindow::connect_iso()
 {
+    default_extrom_mq_iso_text = ui->label_extrom_mq_iso->text();
     update_iso_mq_state(nullptr);
 
     connect(ui->button_iso, &QPushButton::clicked,
