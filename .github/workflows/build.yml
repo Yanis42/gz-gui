@@ -39,6 +39,7 @@ jobs:
       uses: jurplel/install-qt-action@v4
       with:
         version: '6.2.4'
+        arch: 'win64_mingw'
         setup-python: false
     - uses: ilammy/msvc-dev-cmd@v1
     # - name: Setup
