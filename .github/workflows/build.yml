@@ -39,6 +39,7 @@ jobs:
       uses: jurplel/install-qt-action@v3
       with:
         version: '6.2.4'
+    - uses: ilammy/msvc-dev-cmd@v1
     # - name: Setup
     #   run: |
     #     sudo apt-get update
