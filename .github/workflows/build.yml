@@ -1,0 +1,57 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    container: devkitpro/devkitppc:latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            name: "linux"
+            path: "gz-gui"
+    defaults:
+      run:
+        shell: bash
+
+    name: ${{ matrix.name }}
+
+    steps:
+    # Checkout the repository (shallow clone)
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        submodules: recursive
+
+    # Set Git config
+    - name: Git config
+      run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+    # Setup Qt
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: '6.5.2'
+    # - name: Setup
+    #   run: |
+    #     sudo apt-get update
+    #     sudo apt-get install -y qt6-base-dev qmake6
+
+    # Build the project
+    - name: Build
+      run: |
+        qmake6 gz-gui.pro
+        make
+
+    # Upload the executable (if we are on the main branch)
+    # - name: Upload artifacts
+    #   # if: ${{ !matrix.matching && github.ref == 'refs/heads/master' }}
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: gz-gui-${{ matrix.name }}
+    #     path: ${{ matrix.path }}
