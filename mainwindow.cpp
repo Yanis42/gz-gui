@@ -24,9 +24,9 @@ MainWindow::MainWindow(QWidget *parent)
             update_go_state();
         });
 
-    connect_rom();
-    connect_wad();
-    connect_iso();
+    init_rom_tab();
+    init_wad_tab();
+    init_iso_tab();
 
     connect(ui->button_go, &QPushButton::clicked,
         [this]()
@@ -87,9 +87,8 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::connect_rom()
+void MainWindow::init_rom_tab()
 {
-
     connect(ui->button_rom, &QPushButton::clicked,
         [this]()
         {
@@ -130,7 +129,7 @@ void MainWindow::connect_rom()
         });
 }
 
-void MainWindow::connect_wad()
+void MainWindow::init_wad_tab()
 {
     connect(ui->button_wad, &QPushButton::clicked,
         [this]()
@@ -242,49 +241,7 @@ void MainWindow::connect_wad()
         });
 }
 
-void MainWindow::update_iso_mq_state(QString *path)
-{
-    //! TODO: improve how the label text update is handled
-    QString new_text = "This game doesn't have Master Quest.";
-
-    settings.iso_is_mq = false;
-
-    if (path != nullptr) {
-        QFile iso(*path);
-
-        // technically this isn't a text file but
-        // we only need to read the first 6 characters of the file
-        if (iso.open(QFile::ReadOnly | QFile::Text)) {
-            QTextStream stream(&iso);
-            QString game_id = stream.read(6);
-
-            // supported MQ disc IDs (JP and US)
-            if (game_id == "D43J01" || game_id == "D43E01") {
-                new_text = QString::fromStdString(settings.iso_extrom_mq_path);
-
-                settings.iso_is_mq = true;
-
-                if (new_text != "") {
-                    new_text.remove(0, new_text.lastIndexOf('\\') + 1);
-                    new_text.remove(0, new_text.lastIndexOf('/') + 1);
-                } else {
-                    new_text = default_extrom_mq_iso_text;
-                }
-            }
-        } else {
-            QMessageBox::warning(nullptr, "", "ERROR: The ISO can't be opened.");
-        }
-    }
-
-    // update the ui accordingly
-    ui->checkbox_extrom_mq_iso->setEnabled(settings.iso_is_mq);
-    ui->checkbox_extrom_mq_iso->setVisible(settings.iso_is_mq);
-    ui->button_extrom_mq_iso->setDisabled(ui->checkbox_extrom_mq_iso->isChecked());
-    ui->button_extrom_mq_iso->setVisible(settings.iso_is_mq);
-    ui->label_extrom_mq_iso->setText(new_text);
-}
-
-void MainWindow::connect_iso()
+void MainWindow::init_iso_tab()
 {
     default_extrom_mq_iso_text = ui->label_extrom_mq_iso->text();
     update_iso_mq_state(nullptr);
@@ -422,6 +379,48 @@ void MainWindow::connect_iso()
             settings.iso_no_trim = state;
             update_go_state();
         });
+}
+
+void MainWindow::update_iso_mq_state(QString *path)
+{
+    //! TODO: improve how the label text update is handled
+    QString new_text = "This game doesn't have Master Quest.";
+
+    settings.iso_is_mq = false;
+
+    if (path != nullptr) {
+        QFile iso(*path);
+
+        // technically this isn't a text file but
+        // we only need to read the first 6 characters of the file
+        if (iso.open(QFile::ReadOnly | QFile::Text)) {
+            QTextStream stream(&iso);
+            QString game_id = stream.read(6);
+
+            // supported MQ disc IDs (JP and US)
+            if (game_id == "D43J01" || game_id == "D43E01") {
+                new_text = QString::fromStdString(settings.iso_extrom_mq_path);
+
+                settings.iso_is_mq = true;
+
+                if (new_text != "") {
+                    new_text.remove(0, new_text.lastIndexOf('\\') + 1);
+                    new_text.remove(0, new_text.lastIndexOf('/') + 1);
+                } else {
+                    new_text = default_extrom_mq_iso_text;
+                }
+            }
+        } else {
+            QMessageBox::warning(nullptr, "", "ERROR: The ISO can't be opened.");
+        }
+    }
+
+    // update the ui accordingly
+    ui->checkbox_extrom_mq_iso->setEnabled(settings.iso_is_mq);
+    ui->checkbox_extrom_mq_iso->setVisible(settings.iso_is_mq);
+    ui->button_extrom_mq_iso->setDisabled(ui->checkbox_extrom_mq_iso->isChecked());
+    ui->button_extrom_mq_iso->setVisible(settings.iso_is_mq);
+    ui->label_extrom_mq_iso->setText(new_text);
 }
 
 void MainWindow::update_go_state()

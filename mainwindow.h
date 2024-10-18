@@ -18,9 +18,9 @@ private:
     Ui::MainWindow *ui;
     QString default_extrom_mq_iso_text;
 
-    void connect_rom();
-    void connect_wad();
-    void connect_iso();
+    void init_rom_tab();
+    void init_wad_tab();
+    void init_iso_tab();
     void update_iso_mq_state(QString *path);
     void update_go_state();
 };
