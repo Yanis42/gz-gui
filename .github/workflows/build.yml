@@ -13,9 +13,11 @@ jobs:
           - os: ubuntu-latest
             name: "linux"
             path: "gz-gui"
+            arch: "gcc_64"
           - os: windows-latest
             name: "windows"
             path: "gz-gui.exe"
+            arch: "win64_mingw"
     # defaults:
     #   run:
     #     shell: bash
@@ -39,7 +41,7 @@ jobs:
       uses: jurplel/install-qt-action@v4
       with:
         version: '6.2.4'
-        arch: 'win64_mingw'
+        arch: ${{ matrix.arch }}
         setup-python: false
     - uses: ilammy/msvc-dev-cmd@v1
     # - name: Setup
