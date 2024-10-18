@@ -44,10 +44,6 @@ jobs:
         arch: ${{ matrix.arch }}
         setup-python: false
     - uses: ilammy/msvc-dev-cmd@v1
-    # - name: Setup
-    #   run: |
-    #     sudo apt-get update
-    #     sudo apt-get install -y qt6-base-dev qmake6
 
     # Build the project
     - name: Build
@@ -56,9 +52,9 @@ jobs:
         make
 
     # Upload the executable (if we are on the main branch)
-    # - name: Upload artifacts
-    #   # if: ${{ !matrix.matching && github.ref == 'refs/heads/master' }}
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: gz-gui-${{ matrix.name }}
-    #     path: ${{ matrix.path }}
+    - name: Upload artifacts
+      # if: ${{ !matrix.matching && github.ref == 'refs/heads/master' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: gz-gui-${{ matrix.name }}
+        path: ${{ matrix.path }}
