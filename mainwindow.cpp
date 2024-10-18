@@ -416,9 +416,7 @@ void MainWindow::update_iso_mq_state(QString *path)
     }
 
     // update the ui accordingly
-    ui->checkbox_extrom_mq_iso->setEnabled(settings.iso_is_mq);
     ui->checkbox_extrom_mq_iso->setVisible(settings.iso_is_mq);
-    ui->button_extrom_mq_iso->setDisabled(ui->checkbox_extrom_mq_iso->isChecked());
     ui->button_extrom_mq_iso->setVisible(settings.iso_is_mq);
     ui->label_extrom_mq_iso->setText(new_text);
 }
